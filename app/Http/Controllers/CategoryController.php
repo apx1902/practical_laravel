@@ -71,4 +71,27 @@ class CategoryController extends Controller
             'message'=>'Categories fetched successfully',
         ],200);
     }
+
+    public function search(Request $request){
+        //search from both category and subcategory name
+        $data = Category::with(['subcategories'=>function($query) use ($request){
+            $query->where('sub_category_name','like','%'. $request->search.'%');
+        }]);
+
+        if($request->has('search')){
+            $search = "%". $request->search . "%";
+
+            $data = $data->where(function($query) use ($search){
+                $query ->where('category_name','like',$search);
+            })->orWhereHas('subcategories',function($query) use ($search){
+                $query ->where('sub_category_name','like',$search);
+            });
+        }
+
+        return response()->json([
+            'categories' => $data->get(),
+            'status'=>true,
+            'message'=>'Categories fetched successfully',
+        ]);
+    }
 }

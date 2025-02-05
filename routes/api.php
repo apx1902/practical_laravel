@@ -15,6 +15,7 @@ Route::post('/login',[AuthController::class,'Login']);
 
 Route::middleware('auth:sanctum')->group(function(){
     Route::post('/logout',[AuthController::class,'Logout']);
+    Route::post('/search',[CategoryController::class,'search']);
 
     Route::group(['prefix' => 'category'],function () {
         Route::get('/list',[CategoryController::class,'index']);
